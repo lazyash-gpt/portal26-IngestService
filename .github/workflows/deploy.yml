@@ -12,12 +12,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Show files
-        run: ls -la
         
       - name: Make gradlew executable
-        run: chmod +x ./ingest/gradlew
+        run: chmod +x ingest/gradlew
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -26,7 +23,8 @@ jobs:
           java-version: '17'
 
       - name: Build JAR
-        run: ./ingest/gradlew bootJar
+        working-directory: ingest
+        run: ./gradlew bootJar
 
       - name: Upload JAR to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -34,7 +32,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
-          source: build/libs/*.jar
+          source: ingest/build/libs/*.jar
           target: /home/ubuntu/service/ingest.jar
 
       - name: Restart Spring Boot App
