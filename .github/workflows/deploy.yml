@@ -23,7 +23,7 @@ jobs:
           java-version: '17'
 
       - name: Build JAR
-        run: ./gradlew bootJar
+        run: ./ingest/gradlew bootJar
 
       - name: Upload JAR to EC2
         uses: appleboy/scp-action@v0.1.7
