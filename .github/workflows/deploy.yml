@@ -34,7 +34,16 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           source: ingest/build/libs/*.jar
-          target: /home/ubuntu/service/ingest.jar
+          target: /home/ubuntu/service
+          
+      - name: Rename JAR in EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+              mv /home/ubuntu/service/ingest-0.0.1*.jar /home/ubuntu/service/ingest.jar
 
       - name: Restart Spring Boot App
         uses: appleboy/ssh-action@master
