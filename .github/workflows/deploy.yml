@@ -8,10 +8,14 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: Prod
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        
+      - name: Make gradlew executable
+        run: chmod +x ingest/gradlew
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -20,6 +24,7 @@ jobs:
           java-version: '17'
 
       - name: Build JAR
+        working-directory: ingest
         run: ./gradlew bootJar
 
       - name: Upload JAR to EC2
@@ -28,8 +33,17 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
-          source: build/libs/*.jar
-          target: /home/ubuntu/service/ingest.jar
+          source: ingest/build/libs/*.jar
+          target: /home/ubuntu/service
+          
+      - name: Rename JAR in EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+              mv /home/ubuntu/service/ingest-0.0.1*.jar /home/ubuntu/service/ingest.jar
 
       - name: Restart Spring Boot App
         uses: appleboy/ssh-action@master
