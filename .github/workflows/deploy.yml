@@ -48,6 +48,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             echo "Stopping existing Spring Boot app if running..."
+            sudo systemctl stop ingest
             pkill -f 'java -jar' || echo "No running process found"
 
             echo "Updating JAR..."
