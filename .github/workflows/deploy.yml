@@ -8,10 +8,14 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: Prod
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        
+      - name: Make gradlew executable
+        run: chmod +x ingest/gradlew
 
       - name: Set up Java
         uses: actions/setup-java@v3
