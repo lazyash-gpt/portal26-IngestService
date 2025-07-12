@@ -24,6 +24,8 @@ public class IngestController {
     private final Set<String> allowedTiers;
     private final ObjectMapper objectMapper;
 
+    private final long maxReqSize=10 * 1024 * 1024;
+
     public IngestController(IngestQueueService queueService,
                             MeterRegistry meterRegistry,
                             @Value("${allowed-tiers}") Set<String> allowedTiers, ObjectMapper objectMapper) {
@@ -44,7 +46,7 @@ public class IngestController {
         String body="";
         try{
             body= objectMapper.writeValueAsString(request);
-            if (body.length() > 10 * 1024 * 1024) {
+            if (body.length() > maxReqSize) {
                 meterRegistry.counter("events.filtered", "reason", "size_limit").increment();
                 log.warn("Filtered event due to size constraints");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("status", "invalid size"));

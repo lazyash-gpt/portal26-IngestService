@@ -33,17 +33,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
-          source: ingest/build/libs/*.jar
-          target: /home/ubuntu/service
-          
-      - name: Rename JAR in EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-              mv /home/ubuntu/service/ingest-0.0.1*.jar /home/ubuntu/service/ingest.jar
+          source: build/libs/ingest-0.0.1-SNAPSHOT.jar
+          target: /home/ubuntu/service/
 
       - name: Restart Spring Boot App
         uses: appleboy/ssh-action@master
@@ -52,5 +43,15 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            pkill -f 'java -jar' || true
+            echo "Stopping existing Spring Boot app if running..."
+            pkill -f 'java -jar' || echo "No running process found"
+
+            echo "Updating JAR..."
+            mv -f /home/ubuntu/service/ingest-0.0.1-SNAPSHOT.jar /home/ubuntu/service/ingest.jar
+
+            echo "Restarting systemd service..."
+            sudo systemctl daemon-reload
             sudo systemctl restart ingest
+
+            echo "Checking status..."
+            sudo systemctl status ingest --no-pager
