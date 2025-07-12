@@ -25,6 +25,7 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("software.amazon.awssdk:s3:2.25.23")
 	compileOnly("org.projectlombok:lombok")
