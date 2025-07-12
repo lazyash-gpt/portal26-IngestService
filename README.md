@@ -61,12 +61,11 @@ allowed-tiers=free,pro,enterprise
 
 # S3 Configuration
 s3.bucket=my-s3-bucket-name
-aws.region=us-east-1
+aws.region=ap-south-1
 
 # Batching
 batch.max-bytes=5242880  # 5MB
 batch.max-delay-ms=5000
-batch.flush-threads=4
 
 # Metrics
 management.endpoints.web.exposure.include=prometheus
@@ -92,10 +91,11 @@ management.metrics.export.prometheus.enabled=true
 
 ## 📈 Metrics (Prometheus)
 
-* `s3_write_count` – Total S3 write operations
-* `s3_write_batch_size` – Size of each flushed batch
-* `http_server_requests_seconds_count` – Spring metrics per endpoint
-* `filtered_requests_total` – Requests filtered by invalid tier
+* `events.filtered` – Requests filtered due to invalid tier and body size.
+* `events.received` – Requests accepted to further write in s3
+* `s3.ingest.eventst` – Requests added in current batch to write into s3
+* `s3.flush.success` – total successfull s3 writes
+* `s3.flush.failure` - total failed s3 writes
 
 📍 Exposed at:
 
