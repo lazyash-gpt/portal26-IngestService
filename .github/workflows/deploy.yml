@@ -26,6 +26,10 @@ jobs:
       - name: Build JAR
         working-directory: ingest
         run: ./gradlew bootJar
+      
+      - name: Check files
+        working-directory: ingest
+        run: ls -lh build/libs/
 
       - name: Upload JAR to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -33,7 +37,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
-          source: build/libs/ingest-0.0.1-SNAPSHOT.jar
+          source: ingest/build/libs/ingest-0.0.1-SNAPSHOT.jar
           target: /home/ubuntu/service/
 
       - name: Restart Spring Boot App
